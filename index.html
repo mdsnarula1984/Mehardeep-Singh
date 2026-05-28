@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mehardeep Singh Narula</title>
+    
+    <!-- Google Fonts: Space Grotesk for Bold Catchy display and Inter for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        cyber: {
+                            bg: '#05070c',
+                            card: '#0c111d',
+                            accent: '#10b981', // Neon Emerald
+                            accentDim: 'rgba(16, 185, 129, 0.15)',
+                            blue: '#3b82f6',
+                            purple: '#8b5cf6',
+                            textMuted: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #05070c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
+        }
+
+        /* Glowing Effects */
+        .neon-glow {
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+        .neon-border {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
+        }
+        .neon-border-focus:focus-within {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
+            border-color: #10b981 !important;
+        }
+
+        /* Scanline Overlay effect for retro feeling */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="bg-cyber-bg text-gray-100 overflow-x-hidden antialiased">
+
+    <!-- Retro CRT scanlines -->
+    <div class="scanlines"></div>
+
+    <!-- 3D Canvas Background -->
+    <canvas id="three-bg" class="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-40"></canvas>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3"></div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 bg-cyber-bg/85 backdrop-blur-md border-b border-gray-800/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand -->
+            <a href="#hero" class="group flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-cyber-accent/10 border border-cyber-accent/30 flex items-center justify-center font-display font-black text-cyber-accent group-hover:bg-cyber-accent group-hover:text-cyber-bg transition-all duration-300">
+                    M
+                </div>
+                <div>
+                    <span class="font-display font-black tracking-tight text-lg text-white block group-hover:text-cyber-accent transition-colors duration-300">
+                        MDSNARULA
+                    </span>
+                    <span class="text-[10px] text-cyber-accent font-mono uppercase tracking-widest block -mt-1">
+                        SYSTEMS.ACTIVE
+                    </span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8 font-mono text-sm">
+                <a href="#projects" class="text-gray-400 hover:text-cyber-accent transition-colors duration-200">./projects</a>
+                <a href="#skills" class="text-gray-400 hover:text-cyber-accent transition-colors duration-200">./skills</a>
+                <a href="#experience" class="text-gray-400 hover:text-cyber-accent transition-colors duration-200">./milestones</a>
+                <a href="#terminal-section" class="text-gray-400 hover:text-cyber-accent transition-colors duration-200">./shell</a>
+                <a href="#budget-section" class="px-3 py-1.5 rounded border border-cyber-accent text-cyber-accent bg-cyber-accentDim hover:bg-cyber-accent hover:text-cyber-bg transition-all duration-300 font-bold">
+                    [BUDGET_HIRE]
+                </a>
+            </nav>
+
+            <!-- Contact Button (Mobile Navigation Toggle) -->
+            <div class="flex items-center space-x-4">
+                <a href="#contact" class="hidden sm:inline-flex items-center px-4 py-2 rounded-lg bg-white hover:bg-cyber-accent text-cyber-bg font-display font-bold text-sm tracking-tight transition-all duration-300 shadow-md">
+                    Connect.exe
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-400 hover:text-white" aria-label="Toggle Menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path id="menu-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-cyber-card border-b border-gray-800 px-4 py-6 space-y-4">
+            <a href="#projects" class="block font-mono text-gray-400 hover:text-cyber-accent text-base py-1">./projects</a>
+            <a href="#skills" class="block font-mono text-gray-400 hover:text-cyber-accent text-base py-1">./skills</a>
+            <a href="#experience" class="block font-mono text-gray-400 hover:text-cyber-accent text-base py-1">./milestones</a>
+            <a href="#terminal-section" class="block font-mono text-gray-400 hover:text-cyber-accent text-base py-1">./shell</a>
+            <a href="#budget-section" class="block font-mono text-cyber-accent font-bold py-2 border-t border-gray-800 mt-2">
+                [BUDGET_HIRE]
+            </a>
+            <a href="#contact" class="block text-center py-2.5 rounded bg-cyber-accent text-cyber-bg font-display font-bold">
+                Connect.exe
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="relative min-h-[calc(100vh-80px)] flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-12">
+        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            
+            <!-- Hero Text Block -->
+            <div class="lg:col-span-7 flex flex-col justify-center text-left">
+                <!-- Status Tag -->
+                <div class="inline-flex items-center space-x-2 bg-gray-900/80 border border-gray-800 px-3.5 py-1.5 rounded-full w-fit mb-6">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyber-accent animate-pulse"></span>
+                    <span class="text-xs font-mono text-cyber-accent uppercase tracking-widest">Available for custom web systems</span>
+                </div>
+
+                <!-- Big Bold Typography Header -->
+                <h1 class="text-5xl sm:text-7xl lg:text-8xl font-display font-black tracking-tighter uppercase leading-none text-white select-none">
+                    ENGINEERING <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-accent via-emerald-400 to-blue-500 neon-glow">
+                        HIGH PERFORMANCE
+                    </span> <br>
+                    WEB SYSTEMS.
+                </h1>
+
+                <p class="mt-6 text-lg sm:text-xl text-gray-300 max-w-2xl font-light leading-relaxed">
+                    I am <strong class="text-white font-semibold">Mehardeep Singh Narula</strong>. Frontend engineer and developer. I build clean, secure, user-centric interfaces for complex lab data, professional portfolios, and custom high-speed applications.
+                </p>
+
+                <!-- Core Details / Badges -->
+                <div class="mt-8 flex flex-wrap gap-3 font-mono text-xs text-gray-400">
+                    <span class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-md">📍 Delhi / Kanpur, IN</span>
+                    <span class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-md">💻 TypeScript & React Expert</span>
+                    <span class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-md">🧪 IIT Kanpur Partner</span>
+                    <span class="bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-md">📈 Constant Learner</span>
+                </div>
+
+                <!-- Call to Actions -->
+                <div class="mt-10 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+                    <a href="#budget-section" class="px-8 py-4 rounded-xl bg-cyber-accent hover:bg-emerald-400 text-cyber-bg font-display font-black tracking-wide text-center uppercase transition-all duration-300 scale-100 hover:scale-105 shadow-xl shadow-cyber-accent/10">
+                        Get Website on Budget
+                    </a>
+                    <a href="#projects" class="px-8 py-4 rounded-xl bg-gray-900 hover:bg-gray-800 text-white font-display font-bold text-center border border-gray-800 hover:border-gray-700 transition-all duration-300">
+                        Explore Work
+                    </a>
+                </div>
+            </div>
+
+            <!-- Interactive Terminal Preview Box (Hero Right) -->
+            <div class="lg:col-span-5 w-full">
+                <div class="bg-cyber-card/95 border border-gray-800 rounded-xl overflow-hidden neon-border shadow-2xl backdrop-blur-md">
+                    <!-- Terminal Top Bar -->
+                    <div class="bg-gray-900 px-4 py-3 flex items-center justify-between border-b border-gray-800">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+                        </div>
+                        <span class="font-mono text-xs text-gray-500 select-none">mds_shell.sh - v2.5-active</span>
+                        <div class="w-4"></div>
+                    </div>
+                    <!-- Terminal Body Content -->
+                    <div class="p-6 font-mono text-sm text-green-400 min-h-[300px] flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-gray-500">guest@mds:~#</span> <span class="text-white">neofetch</span>
+                            </div>
+                            <div class="text-xs text-emerald-500/90 leading-relaxed">
+                                <span class="text-blue-400 font-bold">MEHARDEEP SINGH NARULA</span><br>
+                                -------------------------<br>
+                                <span class="text-gray-400">OS:</span> Next-Gen Web Environment<br>
+                                <span class="text-gray-400">ROLE:</span> Frontend Engineer / Problem Solver<br>
+                                <span class="text-gray-400">EDUCATION:</span> BCA (Amity Uni), Class XII (2026)<br>
+                                <span class="text-gray-400">AFFILIATION:</span> Freelancer @ IIT Kanpur Research Labs<br>
+                                <span class="text-gray-400">SHELL:</span> React, TS, HTML5, CSS3, Tailwind, NextJS<br>
+                                <span class="text-gray-400">Uptime:</span> Building scalable apps since 10th grade
+                            </div>
+                            <div class="pt-2 text-gray-400 text-xs">
+                                Try executing commands in the full CLI below or scroll to inspect projects.
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-800/80 pt-4 flex items-center justify-between">
+                            <span class="text-xs text-gray-500">Live active server</span>
+                            <a href="#terminal-section" class="text-xs text-cyber-accent hover:underline flex items-center space-x-1">
+                                <span>Go to Interactive Console</span>
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-2 text-gray-500 text-xs font-mono select-none animate-bounce">
+            <span>Scroll down</span>
+            <svg class="w-4 h-4 text-cyber-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- PROJECT PORTFOLIO SECTION -->
+    <section id="projects" class="py-24 px-4 sm:px-6 lg:px-8 border-t border-gray-900 bg-cyber-bg/50 relative">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16">
+                <div>
+                    <span class="text-cyber-accent font-mono text-sm tracking-widest uppercase block mb-2">[ WORK_ENGINE ]</span>
+                    <h2 class="text-4xl sm:text-6xl font-display font-black tracking-tight uppercase text-white">
+                        DIGITAL ECOSYSTEMS
+                    </h2>
+                </div>
+                <p class="text-gray-400 max-w-md mt-4 md:mt-0 font-light text-sm md:text-base">
+                    Delivering premium, high-speed and responsive websites directly for academic institutes, research teams, and professionals at IIT Kanpur.
+                </p>
+            </div>
+
+            <!-- Project Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Project card 1 -->
+                <div class="bg-cyber-card border border-gray-800/80 rounded-2xl p-6 flex flex-col justify-between group hover:border-cyber-accent/40 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyber-accent/5 rounded-full blur-2xl group-hover:bg-cyber-accent/10 transition-all duration-300"></div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <span class="text-xs font-mono text-cyber-accent px-2.5 py-1 rounded bg-cyber-accentDim uppercase">Academic Hub</span>
+                            <span class="text-[10px] font-mono text-gray-500">IIT KANPUR</span>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold tracking-tight text-white mb-3 group-hover:text-cyber-accent transition-colors duration-200">
+                            IMAGINEERING LAB IITK
+                        </h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">
+                            High-performance platform designed for the central prototyping facility. Handles digital project display, engineering resources, and researcher profiles.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-800/50">
+                        <span class="text-xs font-mono text-gray-500">Live Production</span>
+                        <a href="https://www.iitk.ac.in/imagineeringlab/" target="_blank" class="inline-flex items-center space-x-1 text-sm font-mono text-white group-hover:text-cyber-accent transition-colors duration-200">
+                            <span>Visit site</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project card 2 -->
+                <div class="bg-cyber-card border border-gray-800/80 rounded-2xl p-6 flex flex-col justify-between group hover:border-cyber-accent/40 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyber-accent/5 rounded-full blur-2xl group-hover:bg-cyber-accent/10 transition-all duration-300"></div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <span class="text-xs font-mono text-cyber-accent px-2.5 py-1 rounded bg-cyber-accentDim uppercase">Bio-Medical</span>
+                            <span class="text-[10px] font-mono text-gray-500">IIT KANPUR</span>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold tracking-tight text-white mb-3 group-hover:text-cyber-accent transition-colors duration-200">
+                            MEDTECH LAB IITK
+                        </h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">
+                            Clean interface architected to highlight biomedical engineering research, state-of-the-art facilities, and medical innovations under IIT Kanpur faculty.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-800/50">
+                        <span class="text-xs font-mono text-gray-500">Live Production</span>
+                        <a href="https://iitk.ac.in/medtech/" target="_blank" class="inline-flex items-center space-x-1 text-sm font-mono text-white group-hover:text-cyber-accent transition-colors duration-200">
+                            <span>Visit site</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project card 3 -->
+                <div class="bg-cyber-card border border-gray-800/80 rounded-2xl p-6 flex flex-col justify-between group hover:border-cyber-accent/40 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyber-accent/5 rounded-full blur-2xl group-hover:bg-cyber-accent/10 transition-all duration-300"></div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <span class="text-xs font-mono text-cyber-accent px-2.5 py-1 rounded bg-cyber-accentDim uppercase">Faculty Portfolio</span>
+                            <span class="text-[10px] font-mono text-gray-500">IIT KANPUR</span>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold tracking-tight text-white mb-3 group-hover:text-cyber-accent transition-colors duration-200">
+                            PROF. J. RAMKUMAR
+                        </h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">
+                            A customized portfolio showing scientific research publications, patents, milestones, and personal achievements, optimized for extreme fast loading.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-800/50">
+                        <span class="text-xs font-mono text-gray-500">Live Production</span>
+                        <a href="https://home.iitk.ac.in/~jrkumar/" target="_blank" class="inline-flex items-center space-x-1 text-sm font-mono text-white group-hover:text-cyber-accent transition-colors duration-200">
+                            <span>Visit site</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project card 4 -->
+                <div class="bg-cyber-card border border-gray-800/80 rounded-2xl p-6 flex flex-col justify-between group hover:border-cyber-accent/40 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyber-accent/5 rounded-full blur-2xl group-hover:bg-cyber-accent/10 transition-all duration-300"></div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <span class="text-xs font-mono text-cyber-accent px-2.5 py-1 rounded bg-cyber-accentDim uppercase">Faculty Portfolio</span>
+                            <span class="text-[10px] font-mono text-gray-500">IIT KANPUR</span>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold tracking-tight text-white mb-3 group-hover:text-cyber-accent transition-colors duration-200">
+                            DR. AMANDEEP SINGH
+                        </h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">
+                            Personal professional portfolio constructed with fluid layout, rendering extensive academic milestones, publications and collaborative work clearly.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-800/50">
+                        <span class="text-xs font-mono text-gray-500">Live Production</span>
+                        <a href="https://home.iitk.ac.in/~amandeep/" target="_blank" class="inline-flex items-center space-x-1 text-sm font-mono text-white group-hover:text-cyber-accent transition-colors duration-200">
+                            <span>Visit site</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project card 5 (Ongoing PRIDE lab) -->
+                <div class="bg-cyber-card border border-gray-800/80 rounded-2xl p-6 flex flex-col justify-between group hover:border-cyber-accent/40 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyber-accent/5 rounded-full blur-2xl group-hover:bg-cyber-accent/10 transition-all duration-300"></div>
+                    <div>
+                        <div class="flex items-center justify-between mb-6">
+                            <span class="text-xs font-mono text-yellow-400 px-2.5 py-1 rounded bg-yellow-400/10 uppercase">Active Dev</span>
+                            <span class="text-[10px] font-mono text-gray-500">PRIDE LAB</span>
+                        </div>
+                        <h3 class="text-2xl font-display font-bold tracking-tight text-white mb-3 group-hover:text-cyber-accent transition-colors duration-200">
+                            PRIDE LAB IITK
+                        </h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">
+                            Currently spearheading and architecting the digital footprint for PRIDE Lab. Integrating complex secure data visualizers and advanced user interfaces.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-800/50">
+                        <span class="text-xs font-mono text-yellow-400">Under Construction</span>
+                        <span class="text-xs font-mono text-gray-500">Deploying soon</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="budget-section" class="py-24 px-4 sm:px-6 lg:px-8 border-t border-gray-900 bg-gradient-to-b from-cyber-bg to-black relative">
+    <div class="max-w-5xl mx-auto">
+        
+        <div class="text-center mb-16">
+            <span class="text-cyber-accent font-mono text-sm tracking-widest uppercase block mb-2">[ COMMERCE_MODULE ]</span>
+            <h2 class="text-4xl sm:text-6xl font-display font-black tracking-tight uppercase text-white">
+                WEB PROJECTS ON YOUR BUDGET
+            </h2>
+            <p class="text-gray-400 max-w-2xl mx-auto mt-4 font-light text-sm md:text-base">
+                Adjust the currency, pick your website model, and move the slider to see exactly what we can build for your business or research division.
+            </p>
+        </div>
+
+        <div class="flex justify-center mb-12">
+            <div class="inline-flex rounded-xl bg-gray-950 p-1 border border-gray-800 font-mono text-xs">
+                <button id="curr-inr" class="px-5 py-2.5 rounded-lg font-bold bg-cyber-accent text-cyber-bg transition-all duration-300" onclick="setCurrency('INR')">INR (₹)</button>
+                <button id="curr-usd" class="px-5 py-2.5 rounded-lg font-bold text-gray-400 hover:text-white transition-all duration-300" onclick="setCurrency('USD')">USD ($)</button>
+                <button id="curr-gbp" class="px-4 py-2.5 rounded-lg font-bold text-gray-400 hover:text-white transition-all duration-300" onclick="setCurrency('GBP')">GBP (£)</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            
+            <div class="lg:col-span-7 bg-cyber-card border border-gray-800 rounded-2xl p-6 sm:p-8 flex flex-col justify-between neon-border">
+                <div class="space-y-8">
+                    
+                    <div>
+                        <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-4">1. Select Target Budget Limit</label>
+                        <div class="space-y-3">
+                            <input type="range" id="budget-slider" min="8000" max="150000" step="2000" value="45000" 
+                                class="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyber-accent">
+                            <div class="flex justify-between text-xs font-mono text-gray-500 px-1">
+                                <span id="slider-min-lbl">₹8,000</span>
+                                <span id="slider-mid-lbl">₹75,000</span>
+                                <span id="slider-max-lbl">₹1,50,000+</span>
+                            </div>
+                        </div>
+                        <div class="mt-5 p-4 rounded-xl bg-gray-900/80 border border-gray-800 flex items-center justify-between">
+                            <span class="text-xs font-mono text-gray-400">Project Budget Limit:</span>
+                            <span id="budget-display" class="text-3xl font-display font-black text-cyber-accent neon-glow">₹45,000</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-4">2. Choose Website Classification</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="project-type-selector">
+                            <button type="button" class="project-type-btn p-4 text-left rounded-xl border border-gray-800 bg-gray-900/40 hover:border-cyber-accent/60 transition-all text-sm font-medium flex items-center" data-type="portfolio">
+                                <span class="mr-2">🎓</span> Personal Portfolio
+                            </button>
+                            <button type="button" class="project-type-btn p-4 text-left rounded-xl border border-gray-800 bg-gray-900/40 hover:border-cyber-accent/60 transition-all text-sm font-medium flex items-center" data-type="commercial">
+                                <span class="mr-2">🏢</span> Commercial / Business
+                            </button>
+                            <button type="button" class="project-type-btn p-4 text-left rounded-xl border border-gray-800 bg-gray-900/40 hover:border-cyber-accent/60 transition-all text-sm font-medium flex items-center" data-type="lab">
+                                <span class="mr-2">🧪</span> Lab Website
+                            </button>
+                            <button type="button" class="project-type-btn p-3.5 text-left rounded-xl border border-gray-800 bg-gray-900/40 hover:border-cyber-accent/60 transition-all text-sm font-medium flex items-center" data-type="startup">
+                                <span class="mr-2">🚀</span> Tech Startup Website
+                            </button>
+                            <button type="button" class="project-type-btn p-4 text-left rounded-xl border border-gray-800 bg-gray-900/40 hover:border-cyber-accent/60 transition-all text-sm font-medium flex items-center justify-center sm:col-span-2 w-full text-center" data-type="custom">
+                                <span class="mr-2">🛠️</span> Custom Web Application
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-4">3. High Performance Add-ons</label>
+                        <div class="space-y-3">
+                            <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-xl hover:bg-gray-900/30 transition-colors border border-transparent hover:border-gray-800/50">
+                                <input type="checkbox" id="chk-seo" class="feature-checkbox rounded border-gray-800 text-cyber-accent focus:ring-cyber-accent bg-gray-900 w-5 h-5 transition-all" value="seo" checked>
+                                <span class="text-sm text-gray-300 font-light">Advanced Speed Engine & Core Web Vitals Optimization</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-xl hover:bg-gray-900/30 transition-colors border border-transparent hover:border-gray-800/50">
+                                <input type="checkbox" id="chk-security" class="feature-checkbox rounded border-gray-800 text-cyber-accent focus:ring-cyber-accent bg-gray-900 w-5 h-5 transition-all" value="security" checked>
+                                <span class="text-sm text-gray-300 font-light">Hardened SSL & Domain Server Protection Shell</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer p-3 rounded-xl hover:bg-gray-900/30 transition-colors border border-transparent hover:border-gray-800/50">
+                                <input type="checkbox" id="chk-maintenance" class="feature-checkbox rounded border-gray-800 text-cyber-accent focus:ring-cyber-accent bg-gray-900 w-5 h-5 transition-all" value="maintenance">
+                                <span class="text-sm text-gray-300 font-light">12 Months Dedicated Support & Security Auditing</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-gradient-to-br from-cyber-card to-gray-950 border border-gray-800 rounded-2xl p-6 sm:p-8 flex flex-col justify-between neon-border relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-48 h-48 bg-cyber-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 flex flex-col h-full justify-between">
+                    <div>
+                        <div class="border-b border-gray-800 pb-5 mb-6">
+                            <span class="text-xs font-mono text-cyber-accent uppercase tracking-widest block mb-1">PROPOSAL ENGINE OUTPUT</span>
+                            <h3 class="text-xl font-display font-black text-white uppercase tracking-tight">Tailored Budget Proposal</h3>
+                        </div>
+
+                        <div id="proposal-output" class="space-y-5">
+                            </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-gray-800">
+                        <button id="send-budget-proposal" class="w-full py-4 px-6 rounded-xl bg-cyber-accent hover:bg-emerald-400 text-cyber-bg font-display font-black tracking-wide text-center uppercase transition-all duration-300 shadow-lg shadow-cyber-accent/10 hover:shadow-cyber-accent/25 active:scale-[0.99]">
+                            🔒 Submit Budget Request
+                        </button>
+                        <p class="text-[10px] text-center text-gray-500 font-mono mt-3 uppercase tracking-wider">
+                            Generates secure mail with full configuration metrics.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+    <!-- CORE SKILLS MATRIX SECTION -->
+    <section id="skills" class="py-24 px-4 sm:px-6 lg:px-8 border-t border-gray-900 bg-cyber-bg relative">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between mb-16">
+                <div>
+                    <span class="text-cyber-accent font-mono text-sm tracking-widest uppercase block mb-2">[ CORE_COMPETENCIES ]</span>
+                    <h2 class="text-4xl sm:text-6xl font-display font-black tracking-tight uppercase text-white">
+                        THE EXPERTISE STACK
+                    </h2>
+                </div>
+                <p class="text-gray-400 max-w-md mt-4 lg:mt-0 font-light text-sm md:text-base">
+                    Engineered precision starting from the foundations to professional-grade performance optimization.
+                </p>
+            </div>
+
+            <!-- Skills Categories Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Category 1 -->
+                <div class="bg-cyber-card border border-gray-800/80 rounded-2xl p-6 hover:border-gray-700 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-cyber-accent/10 border border-cyber-accent/20 flex items-center justify-center mb-6 text-cyber-accent font-mono font-bold text-lg">
+                        01
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-white mb-4 uppercase tracking-wide">Core Technologies</h3>
+                    <ul class="space-y-2.5 text-sm font-mono text-gray-400">
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyber-accent"></span>
+                            <span>TypeScript</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyber-accent"></span>
+                            <span>JavaScript (ES6+)</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyber-accent"></span>
+                            <span>React.js / Next.js</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyber-accent"></span>
+                            <span>Vue.js Framework</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyber-accent"></span>
+                            <span>HTML5 / CSS3</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-cyber-accent"></span>
+                            <span>Tailwind CSS</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Category 2 -->
+                <div class="bg-cyber-card border border-gray-800/80 rounded-2xl p-6 hover:border-gray-700 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6 text-blue-400 font-mono font-bold text-lg">
+                        02
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-white mb-4 uppercase tracking-wide">Architecture</h3>
+                    <ul class="space-y-2.5 text-sm font-mono text-gray-400">
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                            <span>Frontend System Design</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                            <span>State Management (Redux)</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                            <span>Core Web Vitals</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                            <span>Performance Tuning</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                            <span>Responsive Layout Design</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Category 3 -->
+                <div class="bg-cyber-card border border-gray-800/80 rounded-2xl p-6 hover:border-gray-700 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-6 text-purple-400 font-mono font-bold text-lg">
+                        03
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-white mb-4 uppercase tracking-wide">Development Tools</h3>
+                    <ul class="space-y-2.5 text-sm font-mono text-gray-400">
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            <span>Git / GitHub Action CI</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            <span>Vite / Webpack Bundling</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            <span>Vercel / Netlify Deploy</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            <span>WinSCP / Server Host</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            <span>Postman API Testing</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                            <span>Figma UI/UX Prototyping</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Category 4 -->
+                <div class="bg-cyber-card border border-gray-800/80 rounded-2xl p-6 hover:border-gray-700 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-6 text-orange-400 font-mono font-bold text-lg">
+                        04
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-white mb-4 uppercase tracking-wide">Professional Practices</h3>
+                    <ul class="space-y-2.5 text-sm font-mono text-gray-400">
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+                            <span>Agile / Scrum Sprints</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+                            <span>Technical Spec Writing</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+                            <span>Comprehensive UI Auditing</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+                            <span>Direct Client Relations</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+                            <span>Academic Data Management</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PROFESSIONAL CHRONOLOGY / EDUCATION -->
+    <section id="experience" class="py-24 px-4 sm:px-6 lg:px-8 border-t border-gray-900 bg-cyber-bg/40 relative">
+        <div class="max-w-5xl mx-auto">
+            
+            <div class="text-center mb-16">
+                <span class="text-cyber-accent font-mono text-sm tracking-widest uppercase block mb-2">[ CHRONOLOGY_SYSTEMS ]</span>
+                <h2 class="text-4xl sm:text-6xl font-display font-black tracking-tight uppercase text-white">
+                    MILESTONES & JOURNEY
+                </h2>
+                <p class="text-gray-400 max-w-2xl mx-auto mt-4 font-light text-sm md:text-base">
+                    Highlighting the engineering foundations, academic achievements, and client partnerships.
+                </p>
+            </div>
+
+            <!-- Timeline Structure -->
+            <div class="relative border-l border-gray-800 ml-4 md:ml-32 pl-8 md:pl-12 space-y-12">
+                
+                <!-- Timeline item 1 -->
+                <div class="relative">
+                    <!-- Dot -->
+                    <span class="absolute -left-[41px] md:-left-[57px] top-1.5 flex items-center justify-center w-6 h-6 rounded-full bg-cyber-bg border-2 border-cyber-accent">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyber-accent"></span>
+                    </span>
+                    <!-- Year tag on left for desktop -->
+                    <div class="hidden md:block absolute -left-44 top-1.5 text-right w-28 font-mono text-sm text-cyber-accent font-bold">
+                        June 2024 - Present
+                    </div>
+                    
+                    <div class="bg-cyber-card border border-gray-800 p-6 sm:p-8 rounded-2xl">
+                        <span class="md:hidden inline-block mb-3 text-xs font-mono text-cyber-accent font-semibold px-2 py-1 rounded bg-cyber-accentDim">
+                            June 2024 - Present
+                        </span>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+                            <h3 class="text-2xl font-display font-bold text-white uppercase tracking-tight">Freelance Web Architect</h3>
+                            <span class="text-xs font-mono text-gray-400 uppercase mt-1 sm:mt-0 px-2 py-1 rounded bg-gray-900 border border-gray-800">IIT Kanpur</span>
+                        </div>
+                        <ul class="space-y-3 text-gray-300 font-light text-sm sm:text-base">
+                            <li class="flex items-start space-x-3">
+                                <span class="text-cyber-accent mt-1 select-none">▪</span>
+                                <span>Designed and maintained highly functional laboratory & professional sites directly for university researchers, ensuring complex academic milestone indexing and clean information layout.</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="text-cyber-accent mt-1 select-none">▪</span>
+                                <span>Coordinated complete life-cycle operations including domain administration, deployment structures, and ongoing server security configurations.</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <span class="text-cyber-accent mt-1 select-none">▪</span>
+                                <span>Delivered cross-device responsive speed profiles for research materials and publications.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Timeline item 2 -->
+                <div class="relative">
+                    <!-- Dot -->
+                    <span class="absolute -left-[41px] md:-left-[57px] top-1.5 flex items-center justify-center w-6 h-6 rounded-full bg-cyber-bg border-2 border-blue-500">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                    </span>
+                    <div class="hidden md:block absolute -left-44 top-1.5 text-right w-28 font-mono text-sm text-blue-400 font-bold">
+                        Present
+                    </div>
+
+                    <div class="bg-cyber-card border border-gray-800 p-6 sm:p-8 rounded-2xl">
+                        <span class="md:hidden inline-block mb-3 text-xs font-mono text-blue-400 font-semibold px-2 py-1 rounded bg-blue-500/10">
+                            Present
+                        </span>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+                            <h3 class="text-2xl font-display font-bold text-white uppercase tracking-tight">Bachelor of Computer Applications</h3>
+                            <span class="text-xs font-mono text-gray-400 uppercase mt-1 sm:mt-0 px-2 py-1 rounded bg-gray-900 border border-gray-800">Amity University</span>
+                        </div>
+                        <p class="text-gray-300 font-light text-sm sm:text-base leading-relaxed">
+                            Acquiring advanced fundamentals in database architectures, software engineering processes, networking methodologies, and foundational computer science principles to scale web deployment systems.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Timeline item 3 -->
+                <div class="relative">
+                    <!-- Dot -->
+                    <span class="absolute -left-[41px] md:-left-[57px] top-1.5 flex items-center justify-center w-6 h-6 rounded-full bg-cyber-bg border-2 border-purple-500">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                    </span>
+                    <div class="hidden md:block absolute -left-44 top-1.5 text-right w-28 font-mono text-sm text-purple-400 font-bold">
+                        Completed 2026
+                    </div>
+
+                    <div class="bg-cyber-card border border-gray-800 p-6 sm:p-8 rounded-2xl">
+                        <span class="md:hidden inline-block mb-3 text-xs font-mono text-purple-400 font-semibold px-2 py-1 rounded bg-purple-500/10">
+                            Completed 2026
+                        </span>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+                            <h3 class="text-2xl font-display font-bold text-white uppercase tracking-tight">Higher Secondary Certificate</h3>
+                            <span class="text-xs font-mono text-gray-400 uppercase mt-1 sm:mt-0 px-2 py-1 rounded bg-gray-900 border border-gray-800">Class XII, Non-Medical</span>
+                        </div>
+                        <p class="text-gray-300 font-light text-sm sm:text-base leading-relaxed">
+                            Completed rigorous secondary studies with an emphasis on Physics, Chemistry, and Advanced Mathematics to build robust computational logic.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- INTERACTIVE CLI TERMINAL CONSOLE -->
+    <section id="terminal-section" class="py-24 px-4 sm:px-6 lg:px-8 border-t border-gray-900 bg-black relative">
+        <div class="max-w-4xl mx-auto">
+            
+            <div class="text-center mb-12">
+                <span class="text-cyber-accent font-mono text-sm tracking-widest uppercase block mb-2">[ ROOT_ACCESS ]</span>
+                <h2 class="text-4xl sm:text-5xl font-display font-black tracking-tight uppercase text-white">
+                    DEVELOPER COMMAND SHELL
+                </h2>
+                <p class="text-gray-400 max-w-lg mx-auto mt-3 font-light text-sm">
+                    Enter actual command-line queries below to interactively fetch my resume files, skills, systems and diagnostic parameters.
+                </p>
+            </div>
+
+            <!-- Terminal Main Window -->
+            <div class="bg-cyber-card border border-gray-800 rounded-2xl overflow-hidden shadow-2xl neon-border-focus transition-all duration-300">
+                
+                <!-- Header -->
+                <div class="bg-gray-900 px-5 py-4 flex items-center justify-between border-b border-gray-800 select-none">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                    </div>
+                    <span class="font-mono text-xs text-gray-400">bash mehar_sys_root.sh (Delhi Server)</span>
+                    <span class="text-xs font-mono text-cyber-accent">ONLINE</span>
+                </div>
+
+                <!-- Display Terminal Buffer -->
+                <div id="terminal-screen" class="p-6 font-mono text-sm overflow-y-auto h-96 flex flex-col space-y-4 bg-cyber-bg/95">
+                    
+                    <!-- Boot log output -->
+                    <div class="text-gray-500 text-xs space-y-1">
+                        <div>[SYSTEM DIAGNOSTICS LOG OK] Initializing secure connection to New Delhi Node...</div>
+                        <div>[SYSTEM DIAGNOSTICS LOG OK] Fetching client authorizations... Authentication Complete.</div>
+                        <div class="text-cyber-accent">Type 'help' to view available system commands.</div>
+                    </div>
+
+                    <!-- History Container -->
+                    <div id="terminal-history" class="space-y-3">
+                        <!-- Commands typed will populate here -->
+                    </div>
+
+                </div>
+
+                <!-- Command Input Area -->
+                <div class="border-t border-gray-800 bg-gray-950 p-4 flex items-center space-x-3">
+                    <span class="font-mono text-cyber-accent select-none shrink-0 font-bold">mehar@root:~$</span>
+                    <input type="text" id="terminal-input" class="w-full bg-transparent border-0 outline-none focus:ring-0 text-white font-mono placeholder-gray-700" placeholder="Type command (e.g. help, skills, contact, clear)..." autofocus autocomplete="off" spellcheck="false">
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACT & ENGAGEMENT INQUIRY -->
+    <section id="contact" class="py-24 px-4 sm:px-6 lg:px-8 border-t border-gray-900 bg-cyber-bg relative">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
+                
+                <!-- Information block left -->
+                <div class="lg:col-span-5 flex flex-col justify-between">
+                    <div>
+                        <span class="text-cyber-accent font-mono text-sm tracking-widest uppercase block mb-2">[ HANDSHAKE_INITIATION ]</span>
+                        <h2 class="text-5xl sm:text-6xl font-display font-black tracking-tight uppercase text-white leading-none">
+                            LET'S LAUNCH <br>
+                            SOMETHING NEW.
+                        </h2>
+                        <p class="text-gray-400 mt-6 font-light leading-relaxed text-sm sm:text-base">
+                            Whether you need a full research institute platform at IIT Kanpur, a lightweight custom faculty resume landing page, or a premium high-speed portfolio customized precisely to match your budget restrictions—my system is open.
+                        </p>
+                    </div>
+
+                    <!-- Connect Info Grid -->
+                    <div class="space-y-6 mt-12 lg:mt-0 font-mono text-sm">
+                        
+                        <!-- Contact link -->
+                        <a href="mailto:mehar.iitkproject123@gmail.com" class="flex items-center space-x-4 p-4 rounded-xl border border-gray-800 hover:border-cyber-accent/40 bg-cyber-card/40 hover:bg-cyber-card transition-all duration-200">
+                            <span class="w-10 h-10 rounded-lg bg-cyber-accent/10 flex items-center justify-center text-cyber-accent">✉</span>
+                            <div>
+                                <span class="text-xs text-gray-500 block">EMAIL DISPATCH</span>
+                                <span class="text-white text-sm break-all font-medium">mehar.iitkproject123@gmail.com</span>
+                            </div>
+                        </a>
+
+                        <!-- Contact link -->
+                        <a href="tel:+917007941189" class="flex items-center space-x-4 p-4 rounded-xl border border-gray-800 hover:border-cyber-accent/40 bg-cyber-card/40 hover:bg-cyber-card transition-all duration-200">
+                            <span class="w-10 h-10 rounded-lg bg-cyber-accent/10 flex items-center justify-center text-cyber-accent">📞</span>
+                            <div>
+                                <span class="text-xs text-gray-500 block">SYSTEM COMM-LINK</span>
+                                <span class="text-white text-sm font-medium">+91 7007941189</span>
+                            </div>
+                        </a>
+
+                        <!-- External links social -->
+                        <div class="flex gap-4">
+                            <a href="https://github.com/mdsnarula1984" target="_blank" class="flex-1 py-3 px-4 rounded-xl border border-gray-800 hover:border-white text-center text-gray-400 hover:text-white bg-cyber-card/40 transition-all text-xs font-semibold">
+                                GITHUB
+                            </a>
+                            <a href="https://linkedin.com/in/mdsnarula-1984" target="_blank" class="flex-1 py-3 px-4 rounded-xl border border-gray-800 hover:border-white text-center text-gray-400 hover:text-white bg-cyber-card/40 transition-all text-xs font-semibold">
+                                LINKEDIN
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Secure Contact Form right -->
+                <div class="lg:col-span-7 bg-cyber-card border border-gray-800 rounded-2xl p-6 sm:p-8 neon-border">
+                    <form id="contact-form" class="space-y-6">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">Sender Name</label>
+                                <input type="text" id="form-name" required class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyber-accent transition-all text-sm" placeholder="e.g. Dr. John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">Email Address</label>
+                                <input type="email" id="form-email" required class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyber-accent transition-all text-sm" placeholder="e.g. researcher@iitk.ac.in">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">Inquiry Type / Target Topic</label>
+                            <select id="form-subject" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyber-accent transition-all text-sm">
+                                <option value="Academic Laboratory Platform">Academic Laboratory Platform</option>
+                                <option value="Faculty Portfolio website">Faculty Portfolio Website</option>
+                                <option value="Budget-Restricted Custom Build">Budget-Restricted Custom Build</option>
+                                <option value="General Web Consultancy">General Web Consultancy</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-mono text-gray-400 uppercase tracking-wider mb-2">Specifications & Message Requirements</label>
+                            <textarea id="form-message" required rows="5" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyber-accent transition-all text-sm resize-none" placeholder="Explain what features or parameters your target website requires..."></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 px-6 rounded-xl bg-white hover:bg-cyber-accent text-cyber-bg font-display font-black tracking-wide text-center uppercase transition-all duration-300">
+                            🚀 Dispatch Secure Message
+                        </button>
+
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 px-4 border-t border-gray-900 bg-black text-gray-500 text-xs font-mono">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyber-accent animate-ping"></span>
+                <span>All units functional. Built from Delhi with absolute tech precision.</span>
+            </div>
+            <div>
+                © 2026 Mehardeep Singh Narula. Designed for absolute scale.
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT SYSTEM -->
+    <script>
+        // ----------------- DYNAMIC TOAST SYSTEM -----------------
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `p-4 rounded-xl border font-mono text-xs flex items-center space-x-3 shadow-2xl transition-all duration-300 transform translate-y-5 opacity-0 ${
+                type === 'success' 
+                    ? 'bg-cyber-card border-cyber-accent text-cyber-accent' 
+                    : 'bg-cyber-card border-red-500 text-red-500'
+            }`;
+            
+            toast.innerHTML = `
+                <span class="font-bold">${type === 'success' ? '✓ SYSTEM:' : '⚠ ERROR:'}</span>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.remove('translate-y-5', 'opacity-0');
+            }, 10);
+            
+            // Remove toast after delay
+            setTimeout(() => {
+                toast.classList.add('translate-y-5', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // ----------------- MOBILE MENU TOGGLE -----------------
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.setAttribute('d', 'M4 6h16M4 12h16m-7 6h7');
+            } else {
+                menuIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+            }
+        });
+
+        // Hide mobile menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuIcon.setAttribute('d', 'M4 6h16M4 12h16m-7 6h7');
+            });
+        });
+
+
+        // ----------------- THREE.JS BACKGROUND SCENE -----------------
+        let scene, camera, renderer, starGeometry, stars, particleGroup;
+        let mouseX = 0, mouseY = 0;
+        let windowHalfX = window.innerWidth / 2;
+        let windowHalfY = window.innerHeight / 2;
+
+        function initThree() {
+            const canvas = document.getElementById('three-bg');
+            scene = new THREE.Scene();
+            
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
+            camera.position.z = 500;
+
+            particleGroup = new THREE.Group();
+            scene.add(particleGroup);
+
+            // Create Star particles
+            starGeometry = new THREE.BufferGeometry();
+            const starCount = 350;
+            const starPositions = new Float32Array(starCount * 3);
+            const starColors = new Float32Array(starCount * 3);
+
+            for(let i=0; i < starCount * 3; i += 3) {
+                // Random position points
+                starPositions[i] = (Math.random() - 0.5) * 1200; // x
+                starPositions[i+1] = (Math.random() - 0.5) * 1200; // y
+                starPositions[i+2] = (Math.random() - 0.5) * 1200; // z
+
+                // Random color palette (mixture of green, blue and dark purple nodes)
+                const r = Math.random();
+                if (r < 0.4) {
+                    // Emerald green star
+                    starColors[i] = 0.06;
+                    starColors[i+1] = 0.72;
+                    starColors[i+2] = 0.5;
+                } else if (r < 0.7) {
+                    // Cyber Blue star
+                    starColors[i] = 0.23;
+                    starColors[i+1] = 0.51;
+                    starColors[i+2] = 0.96;
+                } else {
+                    // Soft white star
+                    starColors[i] = 0.6;
+                    starColors[i+1] = 0.65;
+                    starColors[i+2] = 0.7;
+                }
+            }
+
+            starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+            starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+
+            // Custom glowing canvas circle particle
+            const pMaterial = new THREE.PointsMaterial({
+                size: 4.5,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.85,
+                blending: THREE.AdditiveBlending
+            });
+
+            stars = new THREE.Points(starGeometry, pMaterial);
+            particleGroup.add(stars);
+
+            // Central rotating holographic wireframe sphere
+            const sphereGeo = new THREE.IcosahedronGeometry(120, 1);
+            const sphereMat = new THREE.MeshBasicMaterial({
+                color: 0x10b981,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.12
+            });
+            const holoSphere = new THREE.Mesh(sphereGeo, sphereMat);
+            holoSphere.name = "holoSphere";
+            particleGroup.add(holoSphere);
+
+            // Setup Renderer
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Document Mouse Move Listening
+            document.addEventListener('mousemove', onDocumentMouseMove);
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function onDocumentMouseMove(event) {
+            mouseX = (event.clientX - windowHalfX) * 0.25;
+            mouseY = (event.clientY - windowHalfY) * 0.25;
+        }
+
+        function onWindowResize() {
+            windowHalfX = window.innerWidth / 2;
+            windowHalfY = window.innerHeight / 2;
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Continuous rotation of general particle cluster
+            particleGroup.rotation.y += 0.0015;
+            particleGroup.rotation.x += 0.0006;
+
+            const holo = particleGroup.getObjectByName("holoSphere");
+            if (holo) {
+                holo.rotation.y -= 0.003;
+                holo.rotation.x -= 0.001;
+            }
+
+            // Ease response to mouse positioning
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+
+        // Initialize 3D engine safely on window load
+        window.onload = function() {
+            initThree();
+            animate();
+            // Start calculator default state
+            setCurrency('INR');
+        };
+
+
+        // ----------------- MULTI-CURRENCY BUDGET CALCULATOR -----------------
+        const budgetSlider = document.getElementById('budget-slider');
+        const budgetDisplay = document.getElementById('budget-display');
+        const projectTypes = document.querySelectorAll('.project-type-btn');
+        const proposalOutput = document.getElementById('proposal-output');
+        const sendProposalBtn = document.getElementById('send-budget-proposal');
+
+        // Dynamic State Parameters
+        let activeCurrency = 'INR'; // 'INR' | 'USD' | 'GBP'
+        let selectedType = 'portfolio'; // 'portfolio' | 'commercial' | 'lab' | 'startup'
+
+        // Currencies Configurations
+        const CURRENCY_CONFIG = {
+            INR: {
+                symbol: '₹',
+                min: 8000,
+                max: 150000,
+                step: 2000,
+                defaultVal: 45000,
+                limits: { portfolio: 8000, commercial: 15000, lab: 25000, startup: 20000 }
+            },
+            USD: {
+                symbol: '$',
+                min: 100,
+                max: 2000,
+                step: 25,
+                defaultVal: 600,
+                limits: { portfolio: 100, commercial: 200, lab: 300, startup: 250 }
+            },
+            GBP: {
+                symbol: '£',
+                min: 80,
+                max: 1600,
+                step: 20,
+                defaultVal: 500,
+                limits: { portfolio: 80, commercial: 160, lab: 240, startup: 200 }
+            }
+        };
+
+        // Initialize active class on the starting type button
+        document.querySelector('[data-type="portfolio"]').classList.add('border-cyber-accent', 'bg-cyber-accentDim/30', 'text-cyber-accent');
+
+        function setCurrency(currency) {
+            activeCurrency = currency;
+            const config = CURRENCY_CONFIG[currency];
+
+            // Update UI buttons
+            ['INR', 'USD', 'GBP'].forEach(curr => {
+                const btn = document.getElementById(`curr-${curr.toLowerCase()}`);
+                if (curr === currency) {
+                    btn.className = "px-4 py-2.5 rounded-lg font-bold bg-cyber-accent text-cyber-bg transition-all duration-300";
+                } else {
+                    btn.className = "px-4 py-2.5 rounded-lg font-bold text-gray-400 hover:text-white transition-all duration-300";
+                }
+            });
+
+            // Re-range Slider attributes
+            budgetSlider.min = config.min;
+            budgetSlider.max = config.max;
+            budgetSlider.step = config.step;
+            budgetSlider.value = config.defaultVal;
+
+            // Render ranges labels on the slider ends
+            document.getElementById('slider-min-lbl').innerText = `${config.symbol}${config.min.toLocaleString()}`;
+            document.getElementById('slider-mid-lbl').innerText = `${config.symbol}${Math.round((config.max + config.min) / 2).toLocaleString()}`;
+            document.getElementById('slider-max-lbl').innerText = `${config.symbol}${config.max.toLocaleString()}+`;
+
+            // Trigger complete assessment card recalculation
+            verifyLimitsAndRecalculate();
+        }
+
+        budgetSlider.addEventListener('input', () => {
+            verifyLimitsAndRecalculate();
+        });
+
+        // Add action listeners for Project Type selectors
+        projectTypes.forEach(btn => {
+            btn.addEventListener('click', () => {
+                projectTypes.forEach(b => b.classList.remove('border-cyber-accent', 'bg-cyber-accentDim/30', 'text-cyber-accent'));
+                btn.classList.add('border-cyber-accent', 'bg-cyber-accentDim/30', 'text-cyber-accent');
+                selectedType = btn.getAttribute('data-type');
+                verifyLimitsAndRecalculate();
+            });
+        });
+
+        // Add action listeners to checkboxes
+        ['chk-seo', 'chk-security', 'chk-maintenance'].forEach(id => {
+            document.getElementById(id).addEventListener('change', verifyLimitsAndRecalculate);
+        });
+
+        function verifyLimitsAndRecalculate() {
+            const config = CURRENCY_CONFIG[activeCurrency];
+            const typeMinBudget = config.limits[selectedType];
+            let sliderValue = parseInt(budgetSlider.value);
+
+            // Auto bump up budget slider if below minimum threshold for selected website type
+            if (sliderValue < typeMinBudget) {
+                budgetSlider.value = typeMinBudget;
+                sliderValue = typeMinBudget;
+            }
+
+            // Update Live Big display
+            budgetDisplay.innerText = `${config.symbol}${sliderValue.toLocaleString()}`;
+
+            // Rebuild Proposal specifications
+            recalculateProposal(sliderValue, config);
+        }
+
+        function recalculateProposal(budgetVal, config) {
+            let tierTitle = "";
+            let tierColor = "";
+            let scopeItems = [];
+
+            // Tier evaluation logic based on currency thresholds
+            const maxRange = config.max;
+            const percentage = (budgetVal - config.min) / (maxRange - config.min);
+
+            // Project Type display texts
+            const projectTypesLabels = {
+                portfolio: "Personal Portfolio Profile",
+                commercial: "Commercial / Business Node",
+                lab: "Academic Lab / Research Hub",
+                startup: "Tech Startup Web Shell"
+            };
+
+            const chosenLabel = projectTypesLabels[selectedType];
+
+            if (percentage < 0.35) {
+                tierTitle = "Essential Core System";
+                tierColor = "text-blue-400";
+                scopeItems = [
+                    `🚀 Fast static layout tuned for ${chosenLabel}`,
+                    "📱 Pure Fluid Responsive Design (perfect mobile layout)",
+                    "⚡ Static Single Page configuration with high visual fidelity",
+                    "🛠️ Direct interactive communication dispatch links integrated"
+                ];
+            } else if (percentage < 0.75) {
+                tierTitle = "Professional Web Architecture";
+                tierColor = "text-cyber-accent";
+                scopeItems = [
+                    `🚀 Fluid structured multi-page interface for ${chosenLabel}`,
+                    "📁 Custom publications indexes, portfolio cards, and team listings",
+                    "🧬 Integrated dynamic UI modules & state management controls",
+                    "🌐 CI/CD pipeline automation setup guaranteeing ultra-fast load"
+                ];
+            } else {
+                tierTitle = "Enterprise Custom Infrastructure";
+                tierColor = "text-purple-400";
+                scopeItems = [
+                    `🌌 Fully immersive tailored 3D system blueprints for ${chosenLabel}`,
+                    "⚙️ Specialized database endpoints or dynamic logic workflows",
+                    "📊 Sophisticated secure system control dashboards",
+                    "🚀 Speed indexing performance score targeted above 98+"
+                ];
+            }
+
+            // Append optional extras chosen
+            if (document.getElementById('chk-seo').checked) {
+                scopeItems.push("✨ Core asset tuning ensuring optimal mobile page speeds");
+            }
+            if (document.getElementById('chk-security').checked) {
+                scopeItems.push("🔒 Hardened site encryption certificates and domain defenses");
+            }
+            if (document.getElementById('chk-maintenance').checked) {
+                scopeItems.push("🛠️ 1 year regular dependency updates and safety auditing");
+            }
+
+            // Populate proposal layout
+            proposalOutput.innerHTML = `
+                <div>
+                    <span class="text-xs font-mono text-gray-500 block mb-1">SELECTED CONFIGURATION</span>
+                    <span class="text-xs font-mono text-white block font-semibold uppercase tracking-wider">${chosenLabel}</span>
+                </div>
+                <div class="mt-4">
+                    <span class="text-xs font-mono text-gray-500 block">TIER CLASSIFICATION</span>
+                    <span class="text-xl font-display font-black tracking-wide uppercase ${tierColor}">${tierTitle}</span>
+                </div>
+                <div class="mt-4">
+                    <span class="text-xs font-mono text-gray-500 block mb-2">SYSTEM DELIVERABLES</span>
+                    <ul class="space-y-2 text-xs text-gray-300 font-mono">
+                        ${scopeItems.map(item => `<li class="flex items-start space-x-2"><span class="text-cyber-accent font-bold">✔</span><span>${item}</span></li>`).join('')}
+                    </ul>
+                </div>
+                <div class="p-3 rounded-xl bg-gray-900/60 border border-gray-800 text-xs text-gray-400 leading-relaxed font-mono mt-4">
+                    <span class="text-cyber-accent font-bold">Allocation Status:</span> Allocation of ${config.symbol}${budgetVal.toLocaleString()} is verified to cover modern web architecture layout without performance compromises.
+                </div>
+            `;
+        }
+
+        // Budget Proposal Dispatch Handling
+        sendProposalBtn.addEventListener('click', () => {
+            const config = CURRENCY_CONFIG[activeCurrency];
+            const currentBudget = parseInt(budgetSlider.value);
+            const seo = document.getElementById('chk-seo').checked ? 'Included' : 'Excluded';
+            const security = document.getElementById('chk-security').checked ? 'Included' : 'Excluded';
+            const maintenance = document.getElementById('chk-maintenance').checked ? 'Included' : 'Excluded';
+
+            const projectTypesLabels = {
+                portfolio: "Personal Portfolio Website",
+                commercial: "Commercial / Business Website",
+                lab: "Academic Lab Website",
+                startup: "Tech Startup Website"
+            };
+
+            const subject = `New Web Build Request: ${projectTypesLabels[selectedType]}`;
+            const body = `Hi Mehardeep,\n\nI configured a dynamic project estimate directly through your personal website budget tool.\n\nProject Specifications Selected:\n-------------------------------------\n- Web Classification: ${projectTypesLabels[selectedType]}\n- Designated Budget Limit: ${config.symbol}${currentBudget.toLocaleString()} (${activeCurrency})\n\nPerformance Add-ons status:\n- Speed Index Tuning: ${seo}\n- Security Shell Shield: ${security}\n- 12 Months Audit Support: ${maintenance}\n\nPlease get in touch with me as soon as possible to review options and commence setup!\n\nBest regards,\n[Your Name]`;
+
+            // Show secure redirection status feedback
+            showToast("Formatting project blueprint details... redirecting to email handler.", "success");
+
+            const mailtoUrl = `mailto:mehar.iitkproject123@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+            setTimeout(() => {
+                window.location.href = mailtoUrl;
+            }, 800);
+        });
+
+
+        // ----------------- INTERACTIVE TERMINAL CONSOLE -----------------
+        const terminalScreen = document.getElementById('terminal-screen');
+        const terminalHistory = document.getElementById('terminal-history');
+        const terminalInput = document.getElementById('terminal-input');
+
+        const COMMANDS = {
+            help: "Available commands: <br> <span class='text-cyber-accent'>skills</span> - Inspect specialized technologies<br><span class='text-cyber-accent'>projects</span> - View active research lab websites<br><span class='text-cyber-accent'>education</span> - Check my academic parameters<br><span class='text-cyber-accent'>budget</span> - Information on custom budget configurations<br><span class='text-cyber-accent'>contact</span> - System communication channels<br><span class='text-cyber-accent'>neofetch</span> - System diagnostics card<br><span class='text-cyber-accent'>clear</span> - Wipe console history",
+            skills: "• Core Technologies: TypeScript, JavaScript (ES6+), React.js, Next.js, Vue.js, HTML5, CSS3, Tailwind CSS.<br>• Engineering: Frontend System Design, State Management, Performance Optimization (Core Web Vitals).<br>• Tools: VS Code, Git/GitHub, Vite, Webpack, Postman, WinSCP, Figma.",
+            projects: "• Imagineering Lab IITK: High-performance prototyping repository portal<br>• MedTech Lab IITK: Biomedical engineering academic directory<br>• Prof. J. Ramkumar (Personal Site): Complex faculty publication directory<br>• Dr. Amandeep Singh (Personal Site): Clean scholarly portfolio index<br>• PRIDE Lab IITK: Under construction (Deploying soon!)",
+            education: "• Bach. of Computer Applications - Present @ Amity University<br>• Higher Secondary Certificate (Class XII, Non-Medical) - 2026<br>• High School Certificate (Class X) - 2024",
+            budget: "I build robust web portals starting at ₹8,000 / $100 / £80. Use the interactive slider controls above to plan out your project and calculate scope deliverables instantly.",
+            contact: "Contact System Channels:<br>• Direct Mail: mehar.iitkproject123@gmail.com<br>• Comm-Link: +91 7007941189<br>• GitHub: github.com/mdsnarula1984<br>• LinkedIn: linkedin.com/in/mdsnarula-1984",
+            neofetch: `
+                <div class='text-xs text-blue-400 font-bold'>MEHARDEEP SINGH NARULA</div>
+                <div>-------------------------</div>
+                <div><span class='text-gray-500'>OS:</span> Web Systems Shell</div>
+                <div><span class='text-gray-500'>Location:</span> New Delhi / Kanpur, IN</div>
+                <div><span class='text-gray-500'>Speciality:</span> Frontend system architecture & design patterns</div>
+                <div><span class='text-gray-500'>Affiliation:</span> Freelance Developer @ IIT Kanpur Labs</div>
+            `
+        };
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = terminalInput.value.trim().toLowerCase();
+                terminalInput.value = '';
+
+                if (cmd === '') return;
+
+                // Create terminal input log
+                const inputLog = document.createElement('div');
+                inputLog.innerHTML = `<span class="text-cyber-accent">mehar@root:~$</span> <span class="text-white">${cmd}</span>`;
+                terminalHistory.appendChild(inputLog);
+
+                // Create response log
+                const responseLog = document.createElement('div');
+                responseLog.className = 'text-gray-300 pl-4 text-xs leading-relaxed border-l border-gray-800';
+
+                if (cmd === 'clear') {
+                    terminalHistory.innerHTML = '';
+                    inputLog.remove();
+                    responseLog.remove();
+                } else if (COMMANDS[cmd]) {
+                    responseLog.innerHTML = COMMANDS[cmd];
+                    terminalHistory.appendChild(responseLog);
+                } else {
+                    responseLog.innerHTML = `<span class="text-red-500">Command not found: '${cmd}'.</span> Type <span class="text-cyber-accent">'help'</span> for list of systems commands.`;
+                    terminalHistory.appendChild(responseLog);
+                }
+
+                // Autoscroll terminal
+                terminalScreen.scrollTop = terminalScreen.scrollHeight;
+            }
+        });
+
+        // ----------------- SECURE CONTACT FORM HANDLING -----------------
+        const contactForm = document.getElementById('contact-form');
+        const formName = document.getElementById('form-name');
+        const formEmail = document.getElementById('form-email');
+        const formSubject = document.getElementById('form-subject');
+        const formMessage = document.getElementById('form-message');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Construct mail parameters dynamically
+            const subject = `System Inquiry: [${formSubject.value}] - from ${formName.value}`;
+            const body = `Hello Mehardeep,\n\nSender Name: ${formName.value}\nContact Email: ${formEmail.value}\n\nMessage Description:\n-------------------------------------\n${formMessage.value}`;
+            
+            const mailtoUrl = `mailto:mehar.iitkproject123@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+            showToast("Generating dynamic email proposal... sending via client software.", "success");
+            
+            setTimeout(() => {
+                window.location.href = mailtoUrl;
+                contactForm.reset();
+            }, 1000);
+        });
+
+    </script>
+</body>
+</html>
